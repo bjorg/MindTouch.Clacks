@@ -22,6 +22,8 @@ using System.Text;
 
 namespace MindTouch.Clacks.Server.PerfTests {
     public static class TestExtensions {
+
+        //--- Class Methods ---
         public static MemoryStream AsStream(this string data) {
             return new MemoryStream(Encoding.UTF8.GetBytes(data)) { Position = 0 };
         }

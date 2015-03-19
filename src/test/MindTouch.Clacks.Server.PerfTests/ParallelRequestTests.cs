@@ -16,6 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -33,9 +34,43 @@ using log4net;
 namespace MindTouch.Clacks.Server.PerfTests {
     [TestFixture,Ignore]
     public class ParallelRequestTests {
-        private static ILog _log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
+        //--- Types ---
+        private sealed class ClacksInstrumentation : IClacksInstrumentation {
+
+            //--- Fields ---
+            public int Connected;
+            public int Disconnected;
+            public int Requests;
+            public long RequestTicks;
+
+            //--- Methods ---
+            public void ClientConnected(Guid clientId, IPEndPoint remoteEndPoint) {
+                Interlocked.Increment(ref Connected);
+            }
+
+            public void ClientDisconnected(Guid clientId) {
+                Interlocked.Increment(ref Disconnected);
+            }
+
+            public void CommandCompleted(StatsCommandInfo info) {
+                Interlocked.Increment(ref Requests);
+                Interlocked.Add(ref RequestTicks, info.Elapsed.Ticks);
+            }
+
+            public void AwaitingCommand(Guid clientId, ulong requestId) { }
+            public void ProcessedCommand(StatsCommandInfo statsCommandInfo) { }
+            public void ReceivedCommand(StatsCommandInfo statsCommandInfo) { }
+            public void ReceivedCommandPayload(StatsCommandInfo statsCommandInfo) { }
+        }
+
+        //--- Class Fields ---
+        private static readonly ILog _log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
+        //--- Fields ---
         private int _port;
 
+        //--- Methods ---
         [SetUp]
         public void Setup() {
             _log.Debug("priming logger");
@@ -165,7 +200,6 @@ namespace MindTouch.Clacks.Server.PerfTests {
             }
         }
 
-
         [Test]
         public void Async_Roundtrip_many_binary_payloads() {
             using(ServerBuilder.CreateAsync(new IPEndPoint(IPAddress.Parse("127.0.0.1"), _port))
@@ -272,31 +306,6 @@ namespace MindTouch.Clacks.Server.PerfTests {
                 }
                 base.Receive(continuation);
             }
-        }
-
-        private class ClacksInstrumentation : IClacksInstrumentation {
-            public int Connected;
-            public int Disconnected;
-            public int Requests;
-            public long RequestTicks;
-
-            public void ClientConnected(Guid clientId, IPEndPoint remoteEndPoint) {
-                Interlocked.Increment(ref Connected);
-            }
-
-            public void ClientDisconnected(Guid clientId) {
-                Interlocked.Increment(ref Disconnected);
-            }
-
-            public void CommandCompleted(StatsCommandInfo info) {
-                Interlocked.Increment(ref Requests);
-                Interlocked.Add(ref RequestTicks, info.Elapsed.Ticks);
-            }
-
-            public void AwaitingCommand(Guid clientId, ulong requestId) { }
-            public void ProcessedCommand(StatsCommandInfo statsCommandInfo) { }
-            public void ReceivedCommand(StatsCommandInfo statsCommandInfo) { }
-            public void ReceivedCommandPayload(StatsCommandInfo statsCommandInfo) { }
         }
     }
 }

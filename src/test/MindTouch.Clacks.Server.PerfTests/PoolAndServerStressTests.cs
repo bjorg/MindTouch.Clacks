@@ -27,14 +27,16 @@ using NUnit.Framework;
 using log4net;
 
 namespace MindTouch.Clacks.Server.PerfTests {
-
     [TestFixture]
     public class PoolAndServerStressTests {
 
+        //--- Class Fields ---
+        private static readonly ILog _log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        private static ILog _log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        //--- Fields ---
         private int _port;
 
+        //--- Methods ---
         [SetUp]
         public void Setup() {
             _log.Debug("priming logger");

@@ -26,13 +26,16 @@ using MindTouch.Clacks.Client;
 using NUnit.Framework;
 
 namespace MindTouch.Clacks.Server.PerfTests {
-
     [TestFixture]
     public class RountripTests {
 
-        private static ILog _log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        //--- Class Fields ---
+        private static readonly ILog _log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
+        //--- Fields ---
         private int _port;
 
+        //--- Methods ---
         [SetUp]
         public void Setup() {
             _log.Debug("priming logger");
