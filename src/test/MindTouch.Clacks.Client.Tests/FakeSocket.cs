@@ -22,19 +22,22 @@ using MindTouch.Clacks.Client.Net;
 
 namespace MindTouch.Clacks.Client.Tests {
     public class FakeSocket : ISocket {
+
+        //--- Fields ---
         public int DisposeCalled;
         public int ConnectedCalled;
+        public Action SendCallback = () => { };
+        public int SendCalled;
+        public Func<byte[], int, int, int> ReceiveCallback = (buffer, offset, size) => 0;
+        public int ReceiveCalled;
         private bool _connnected;
 
+        //--- Constructors ---
         public FakeSocket() {
             Connected = true;
         }
 
-        public void Dispose() {
-            DisposeCalled++;
-            Connected = false;
-        }
-
+        //--- Properties ---
         public bool Connected {
             get { ConnectedCalled++; return _connnected; }
             set { _connnected = value; }
@@ -42,10 +45,11 @@ namespace MindTouch.Clacks.Client.Tests {
 
         public bool IsDisposed { get { return DisposeCalled > 0; } }
 
-        public Action SendCallback = () => { };
-        public int SendCalled;
-        public Func<byte[], int, int, int> ReceiveCallback = (buffer, offset, size) => 0;
-        public int ReceiveCalled;
+        //--- Methods ---
+        public void Dispose() {
+            DisposeCalled++;
+            Connected = false;
+        }
 
         public int Send(byte[] buffer, int offset, int size) {
             SendCalled++;

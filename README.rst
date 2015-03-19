@@ -92,5 +92,6 @@ Calling the server to echo some arguments
 Contributors
 ============
 - Arne F. Claassen (sdether)
+- Steve G. Bjorg (bjorg)
 
 

@@ -22,9 +22,11 @@ using MindTouch.Clacks.Client.Net;
 namespace MindTouch.Clacks.Client.Tests {
     public class PoolSocketCallbacks {
 
+        //--- Fields ---
         public ISocket ReclaimedSocket;
         public int ReclaimCalled;
 
+        //--- Methods ---
         public void Reclaim(ISocket socket) {
             ReclaimedSocket = socket;
             ReclaimCalled++;

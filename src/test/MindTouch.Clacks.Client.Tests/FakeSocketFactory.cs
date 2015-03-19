@@ -24,9 +24,11 @@ using MindTouch.Clacks.Client.Net;
 namespace MindTouch.Clacks.Client.Tests {
     public class FakeSocketFactory {
 
+        //--- Fields ---
         public readonly List<FakeSocket> Sockets = new List<FakeSocket>();
-
         public Func<FakeSocket> Builder = () => new FakeSocket();
+
+        //--- Methods ---
         public ISocket Create() {
             var socket = Builder();
             lock(Sockets) {

@@ -25,8 +25,11 @@ using NUnit.Framework;
 namespace MindTouch.Clacks.Client.Tests {
     [TestFixture]
     public class ConnectionPoolTests {
+
+        //--- Fields ---
         private FakeSocketFactory _factory;
 
+        //--- Methods ---
         [SetUp]
         public void Setup() {
             _factory = new FakeSocketFactory();

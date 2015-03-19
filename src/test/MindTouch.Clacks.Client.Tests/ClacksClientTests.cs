@@ -29,8 +29,10 @@ namespace MindTouch.Clacks.Client.Tests {
     [TestFixture]
     public class ClacksClientTests {
 
+        //--- Fields ---
         private FakeSocketFactory _factory;
 
+        //--- Methods ---
         [SetUp]
         public void Setup() {
             _factory = new FakeSocketFactory();
@@ -227,6 +229,5 @@ namespace MindTouch.Clacks.Client.Tests {
             Assert.AreEqual(1, successSocket.ReceiveCalled);
             Assert.AreEqual("OK", response.Status);
         }
-
     }
 }

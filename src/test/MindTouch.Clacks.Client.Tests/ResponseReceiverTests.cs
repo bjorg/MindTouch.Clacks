@@ -24,10 +24,10 @@ using System.Text;
 using NUnit.Framework;
 
 namespace MindTouch.Clacks.Client.Tests {
-
     [TestFixture]
     public class ResponseReceiverTests {
 
+        //--- Methods ---
         [Test]
         public void Can_read_single_response_with_data_from_single_receive() {
 

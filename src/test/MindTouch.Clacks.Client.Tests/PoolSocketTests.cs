@@ -17,19 +17,15 @@
  * limitations under the License.
  */
 
-using System;
-using System.Net;
 using System.Net.Sockets;
-using System.Threading;
-using MindTouch.Clacks.Client.Net;
 using MindTouch.Clacks.Client.Net.Helper;
 using NUnit.Framework;
 
 namespace MindTouch.Clacks.Client.Tests {
-
     [TestFixture]
     public class PoolSocketTests {
 
+        //--- Methods ---
         [Test]
         public void On_failure_PoolSocket_and_underlying_socket_are_disposed_and_reclaimed() {
 
@@ -43,6 +39,7 @@ namespace MindTouch.Clacks.Client.Tests {
                 poolsocket.Receive(new byte[0], 0, 0);
                 Assert.Fail("didn't throw");
             } catch(SocketException) { }
+
             // Assert
             Assert.AreEqual(1, fakesocket.ReceiveCalled, "send called wrong number of times");
             Assert.IsTrue(fakesocket.IsDisposed, "underlying socket wasn't disposed");

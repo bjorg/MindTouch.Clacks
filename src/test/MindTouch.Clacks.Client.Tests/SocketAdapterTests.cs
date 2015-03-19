@@ -16,6 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using System.Diagnostics;
 using System.Net;
@@ -27,23 +28,25 @@ using NUnit.Framework;
 using log4net;
 
 namespace MindTouch.Clacks.Client.Tests {
-
     [TestFixture]
     public class SocketAdapterTests {
 
+        //--- Class Fields ---
         private static readonly ILog _log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
+        //--- Fields ---
         private int _port;
         private Socket _connectedSocket;
         private Socket _listenSocket;
         private ManualResetEvent _connectSignal;
 
+        //--- Methods ---
         [SetUp]
         public void Setup() {
             _log.Debug("priming logger");
             _port = new Random().Next(1000, 30000);
             _connectSignal = new ManualResetEvent(false);
         }
-
 
         [Test]
         public void Connect_timeout_with_hostport_is_respected() {
