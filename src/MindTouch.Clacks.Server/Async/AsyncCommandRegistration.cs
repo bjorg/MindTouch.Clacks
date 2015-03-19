@@ -16,12 +16,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 
 namespace MindTouch.Clacks.Server.Async {
     public class AsyncCommandRegistration : CommandRegistration<IAsyncCommandHandler, Action<IRequest, Exception, Action<IResponse>>>, IAsyncCommandRegistration {
+
+        //--- Constructors ---
         public AsyncCommandRegistration(DataExpectation dataExpectation, CommandHandlerBuilder<IAsyncCommandHandler, Action<IRequest, Exception, Action<IResponse>>> builder) : base(dataExpectation, builder) { }
     }
-
-
 }

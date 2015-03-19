@@ -21,6 +21,8 @@ using System.Net;
 
 namespace MindTouch.Clacks.Server {
     public interface IRequest {
+
+        //--- Properties ---
         IPEndPoint Client { get; }
         string Command { get; }
         string[] Arguments { get; }

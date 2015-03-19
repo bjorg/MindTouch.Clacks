@@ -22,18 +22,27 @@ using System.Collections.Generic;
 namespace MindTouch.Clacks.Server {
     public class Response : IResponse {
 
+        //--- Class Methods ---
         public static Response Create(string status) {
             return new Response(status);
         }
 
+        //--- Fields ---
         private readonly string _status;
         private readonly List<string> _args = new List<string>();
         private byte[] _data;
 
+        //--- Constructors ---
         private Response(string status) {
             _status = status;
         }
 
+        //--- Properties ---
+        string IResponse.Status { get { return _status; } }
+        IEnumerable<string> IResponse.Arguments { get { return _args; } }
+        byte[] IResponse.Data { get { return _data; } }
+
+        //--- Methods ---
         public Response WithArguments(string[] args) {
             _args.AddRange(args);
             return this;
@@ -48,9 +57,5 @@ namespace MindTouch.Clacks.Server {
             _data = payload;
             return this;
         }
-
-        string IResponse.Status { get { return _status; } }
-        IEnumerable<string> IResponse.Arguments { get { return _args; } }
-        byte[] IResponse.Data { get { return _data; } }
     }
 }

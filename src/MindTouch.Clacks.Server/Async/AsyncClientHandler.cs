@@ -16,25 +16,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using System.Net.Sockets;
 
 namespace MindTouch.Clacks.Server.Async {
     public class AsyncClientHandler : AClientRequestHandler {
 
+        //--- Class Fields ---
         private static readonly Logger.ILog _log = Logger.CreateLog();
 
+        //--- Fields ---
         private readonly IAsyncCommandDispatcher _dispatcher;
         private IAsyncCommandHandler _commandHandler;
         private IResponse _response;
         private Action _nextResponseCallback;
         private string _lastStatus;
 
+        //--- Constructors ---
         public AsyncClientHandler(Guid clientId, Socket socket, IAsyncCommandDispatcher dispatcher, IClacksInstrumentation instrumentation, Action<IClientHandler> removeCallback)
             : base(clientId, socket, instrumentation, removeCallback) {
             _dispatcher = dispatcher;
         }
 
+        //--- Methods ---
         public override void ProcessRequests() {
             try {
                 StartCommandRequest();

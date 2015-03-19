@@ -20,6 +20,8 @@ using System;
 
 namespace MindTouch.Clacks.Server {
     public interface ICommandHandler : IDisposable {
+
+        //--- Properties ---
         bool ExpectsData { get; }
         bool DisconnectOnCompletion { get; }
         int OutstandingBytes { get; }

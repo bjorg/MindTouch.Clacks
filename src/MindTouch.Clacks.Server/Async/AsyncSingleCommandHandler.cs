@@ -16,6 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -23,10 +24,12 @@ using System.Net;
 namespace MindTouch.Clacks.Server.Async {
     public class AsyncSingleCommandHandler : IAsyncCommandHandler {
 
+        //--- Class Methods ---
         public static IAsyncCommandHandler DisconnectHandler(string command, Action<IRequest, Action<IResponse>> handler) {
             return new AsyncSingleCommandHandler(command, handler);
         }
 
+        //--- Fields ---
         private readonly IPEndPoint _client;
         private readonly string _command;
         private readonly string[] _arguments;
@@ -37,6 +40,7 @@ namespace MindTouch.Clacks.Server.Async {
         private int _received;
         private List<byte[]> _dataChunks;
 
+        //--- Constructors ---
         public AsyncSingleCommandHandler(IPEndPoint client, string command, string[] arguments, int dataLength, Action<IRequest, Action<IResponse>> handler, Action<IRequest, Exception, Action<IResponse>> errorHandler) {
             _client = client;
             _command = command;
@@ -52,12 +56,14 @@ namespace MindTouch.Clacks.Server.Async {
             _disconnect = true;
         }
 
-        public void Dispose() { }
-
+        //--- Properties ---
         public bool ExpectsData { get { return _dataLength > 0; } }
         public bool DisconnectOnCompletion { get { return _disconnect; } }
         public int OutstandingBytes { get { return _dataLength - _received; } }
         public string Command { get { return _command; } }
+
+        //--- Methods ---
+        public void Dispose() { }
 
         public void AcceptData(byte[] chunk) {
             if(_dataChunks == null) {

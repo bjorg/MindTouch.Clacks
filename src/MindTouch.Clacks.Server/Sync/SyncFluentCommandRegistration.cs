@@ -16,11 +16,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using System.Collections.Generic;
 
 namespace MindTouch.Clacks.Server.Sync {
     public class SyncFluentCommandRegistration : ISyncFluentCommandRegistration {
+
+        //--- Fields ---
         private readonly ServerBuilder _serverBuilder;
         private readonly SyncCommandRepository _repository;
         private readonly string _command;
@@ -29,12 +32,14 @@ namespace MindTouch.Clacks.Server.Sync {
         private Func<IRequest, IResponse> _singleResponseHandler;
         private Func<IRequest, IEnumerable<IResponse>> _multiResponseHandler;
 
+        //--- Constructors ---
         public SyncFluentCommandRegistration(ServerBuilder serverBuilder, SyncCommandRepository repository, string command) {
             _serverBuilder = serverBuilder;
             _repository = repository;
             _command = command;
         }
 
+        //--- Methods ---
         public ISyncFluentCommandRegistration IsDisconnect() {
             _isDisconnect = true;
             return this;

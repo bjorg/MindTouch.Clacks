@@ -21,6 +21,8 @@ using System.Net;
 
 namespace MindTouch.Clacks.Server {
     public interface IClacksInstrumentation {
+
+        //--- Methods ---
         void ClientConnected(Guid clientId, IPEndPoint remoteEndPoint);
         void ClientDisconnected(Guid clientId);
         void CommandCompleted(StatsCommandInfo info);

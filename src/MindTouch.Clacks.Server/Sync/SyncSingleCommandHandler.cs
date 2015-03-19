@@ -16,6 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -23,10 +24,12 @@ using System.Net;
 namespace MindTouch.Clacks.Server.Sync {
     public class SyncSingleCommandHandler : ISyncCommandHandler {
 
+        //--- Class Methods ---
         public static ISyncCommandHandler DisconnectHandler(string command, Func<IRequest, IResponse> handler) {
             return new SyncSingleCommandHandler(command, handler);
         }
 
+        //--- Fields ---
         private readonly IPEndPoint _client;
         private readonly string _command;
         private readonly string[] _arguments;
@@ -37,6 +40,7 @@ namespace MindTouch.Clacks.Server.Sync {
         private int _received;
         private List<byte[]> _dataChunks;
 
+        //--- Constructors ---
         public SyncSingleCommandHandler(IPEndPoint client, string command, string[] arguments, int dataLength, Func<IRequest, IResponse> handler, Func<IRequest, Exception, IResponse> errorHandler) {
             _client = client;
             _command = command;
@@ -52,11 +56,13 @@ namespace MindTouch.Clacks.Server.Sync {
             _disconnect = true;
         }
 
+        //--- Properties ---
         public bool ExpectsData { get { return _dataLength > 0; } }
         public bool DisconnectOnCompletion { get { return _disconnect; } }
         public int OutstandingBytes { get { return _dataLength - _received; } }
         public string Command { get { return _command; } }
 
+        //--- Methods ---
         public void AcceptData(byte[] chunk) {
             if(_dataChunks == null) {
                 _dataChunks = new List<byte[]>();

@@ -16,22 +16,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using System.Linq;
 using System.Net;
 
 namespace MindTouch.Clacks.Server {
     public abstract class CommandRegistration<THandler,TError> {
+
+        //--- Fields ---
         private readonly DataExpectation _dataExpectation;
         private readonly CommandHandlerBuilder<THandler, TError> _builder;
 
+        //--- Constructors ---
         protected CommandRegistration(DataExpectation dataExpectation, CommandHandlerBuilder<THandler, TError> builder) {
             _dataExpectation = dataExpectation;
             _builder = builder;
         }
 
+        //--- Properties ---
         public DataExpectation DataExpectation { get { return _dataExpectation; } }
 
+        //--- Methods ---
         public THandler GetHandler(IPEndPoint client, string[] commandArgs, TError errorHandler) {
             var command = commandArgs.FirstOrDefault() ?? string.Empty;
             var dataLength = 0;

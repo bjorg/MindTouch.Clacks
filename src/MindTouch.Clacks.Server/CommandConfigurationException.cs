@@ -16,10 +16,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 
 namespace MindTouch.Clacks.Server {
     public class CommandConfigurationException : Exception {
+
+        //--- Constructors ---
         public CommandConfigurationException(string message) : base(message) { }
     }
 }

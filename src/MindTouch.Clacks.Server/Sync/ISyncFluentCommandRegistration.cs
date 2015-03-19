@@ -16,11 +16,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using System.Collections.Generic;
 
 namespace MindTouch.Clacks.Server.Sync {
     public interface ISyncFluentCommandRegistration {
+
+        //--- Methods ---
         ISyncFluentCommandRegistration IsDisconnect();
         ISyncFluentCommandRegistration HandledBy(Func<IRequest, IResponse> handler);
         ISyncFluentCommandRegistration HandledBy(Func<IRequest, IEnumerable<IResponse>> handler);

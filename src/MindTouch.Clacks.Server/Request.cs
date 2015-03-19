@@ -22,11 +22,14 @@ using System.Net;
 
 namespace MindTouch.Clacks.Server {
     public class Request : IRequest {
+
+        //--- Fields ---
         private readonly IPEndPoint _client;
         private readonly string _command;
         private readonly string[] _arguments;
         private readonly byte[] _data;
 
+        //--- Constructors ---
         public Request(string[] command) {
             _command = command[0];
         }
@@ -45,6 +48,7 @@ namespace MindTouch.Clacks.Server {
             }
         }
 
+        //--- Properties ---
         public IPEndPoint Client { get { return _client; } }
         public string Command { get { return _command; } }
         public string[] Arguments { get { return _arguments; } }

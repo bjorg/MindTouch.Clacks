@@ -16,6 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,14 +26,17 @@ using System.Net.Sockets;
 namespace MindTouch.Clacks.Server {
     public class ClacksServer : IDisposable {
 
+        //--- Class Fields ---
         private static readonly Logger.ILog _log = Logger.CreateLog();
 
+        //--- Fields ---
         private readonly IPEndPoint _listenEndpoint;
         private readonly IClacksInstrumentation _instrumentation;
         private readonly IClientHandlerFactory _clientHandlerFactory;
         private readonly Socket _listenSocket;
         private readonly Dictionary<Guid, IClientHandler> _openConnections = new Dictionary<Guid, IClientHandler>();
 
+        //--- Constructors ---
         public ClacksServer(IPEndPoint listenEndpoint, IClacksInstrumentation instrumentation, IClientHandlerFactory clientHandlerFactory) {
             _listenEndpoint = listenEndpoint;
             _instrumentation = instrumentation;
@@ -44,6 +48,7 @@ namespace MindTouch.Clacks.Server {
             BeginWaitForConnection();
         }
 
+        //--- Methods ---
         private void BeginWaitForConnection() {
             try {
                 _listenSocket.BeginAccept(OnAccept, _listenSocket);

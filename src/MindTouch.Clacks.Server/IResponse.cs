@@ -16,10 +16,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System.Collections.Generic;
 
 namespace MindTouch.Clacks.Server {
     public interface IResponse {
+
+        //--- Properties ---
         string Status { get;}
         IEnumerable<string> Arguments { get; }
         byte[] Data { get; }

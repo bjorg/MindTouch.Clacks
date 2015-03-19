@@ -16,10 +16,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 
 namespace MindTouch.Clacks.Server.Sync {
     public class SyncCommandRegistration : CommandRegistration<ISyncCommandHandler,Func<IRequest, Exception, IResponse>>, ISyncCommandRegistration {
+
+        //--- Constructors ---
         public SyncCommandRegistration(DataExpectation dataExpectation, CommandHandlerBuilder<ISyncCommandHandler, Func<IRequest, Exception, IResponse>> builder) : base(dataExpectation, builder) {}
     }
 }

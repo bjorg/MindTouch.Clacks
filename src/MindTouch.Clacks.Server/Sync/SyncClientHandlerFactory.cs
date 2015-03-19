@@ -16,17 +16,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using System.Net.Sockets;
 
 namespace MindTouch.Clacks.Server.Sync {
     public class SyncClientHandlerFactory : IClientHandlerFactory {
+
+        //--- Fields ---
         private readonly ISyncCommandDispatcher _dispatcher;
 
+        //--- Constructors ---
         public SyncClientHandlerFactory(ISyncCommandDispatcher dispatcher) {
             _dispatcher = dispatcher;
         }
 
+        //--- Methods ---
         public IClientHandler Create(Guid clientId, Socket socket, IClacksInstrumentation instrumentation, Action<IClientHandler> removeHandler) {
             return new SyncClientHandler(clientId, socket, _dispatcher, instrumentation, removeHandler);
         }

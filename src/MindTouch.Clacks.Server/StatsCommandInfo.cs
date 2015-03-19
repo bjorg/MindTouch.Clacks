@@ -16,23 +16,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 
 namespace MindTouch.Clacks.Server {
     public class StatsCommandInfo {
 
+        //--- Fields ---
         public readonly Guid ClientId;
         public readonly ulong RequestId;
         public readonly TimeSpan Elapsed;
         public readonly string[] Args;
         public readonly string Status;
 
+        //--- Constructors ---
         public StatsCommandInfo(Guid clientId, ulong requestId, TimeSpan elapsed, string[] args, string status) {
-            ClientId = clientId;
-            RequestId = requestId;
-            Elapsed = elapsed;
-            Args = args;
-            Status = status;
+            this.ClientId = clientId;
+            this.RequestId = requestId;
+            this.Elapsed = elapsed;
+            this.Args = args;
+            this.Status = status;
         }
     }
 }

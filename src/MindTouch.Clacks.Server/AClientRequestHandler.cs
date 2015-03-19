@@ -16,6 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using System.Diagnostics;
 using System.Net;
@@ -25,27 +26,27 @@ using System.Text;
 namespace MindTouch.Clacks.Server {
     public abstract class AClientRequestHandler : IDisposable, IClientHandler {
 
+        //--- Class Fields ---
         private static readonly Logger.ILog _log = Logger.CreateLog();
 
+        //--- Fields ---
         private readonly Action<IClientHandler> _removeCallback;
         private readonly Guid _clientId;
         private readonly Stopwatch _requestTimer = new Stopwatch();
         private readonly IClacksInstrumentation _instrumentation;
-
         protected readonly Socket _socket;
         protected readonly IPEndPoint _endPoint;
         protected readonly StringBuilder _commandBuffer = new StringBuilder();
         protected readonly byte[] _buffer = new byte[16 * 1024];
-
         private string[] _commandArgs;
         private bool _isDisposed;
         private bool _inCommand = false;
-
         protected ulong _commandCounter;
         protected int _bufferPosition;
         protected int _bufferDataLength;
         protected bool _carriageReturn;
 
+        //--- Constructors ---
         protected AClientRequestHandler(Guid clientId, Socket socket, IClacksInstrumentation instrumentation, Action<IClientHandler> removeCallback) {
             _clientId = clientId;
             _socket = socket;
@@ -55,11 +56,14 @@ namespace MindTouch.Clacks.Server {
             _instrumentation.ClientConnected(_clientId, _endPoint);
         }
 
+        //--- Properties ---
         public Guid Id { get { return _clientId; } }
         public IPEndPoint EndPoint { get { return _endPoint; } }
 
         protected abstract ICommandHandler Handler { get; }
         protected bool IsDisposed { get { return _isDisposed; } }
+
+        //--- Abstract Methods ---
 
         /* WorkFlow
           * 1. If data in buffer go to 4.
@@ -94,6 +98,8 @@ namespace MindTouch.Clacks.Server {
         /// 13/14. -> Calls StartCommandRequest
         /// </summary>
         protected abstract void ProcessCommand();
+
+        //--- Methods ---
 
         // 1.
         protected void StartCommandRequest() {
@@ -216,12 +222,10 @@ namespace MindTouch.Clacks.Server {
             ProcessCommand();
         }
 
-
         protected void PrepareResponse(string status) {
             _instrumentation.ProcessedCommand(new StatsCommandInfo(Id, _commandCounter, _requestTimer.Elapsed, _commandArgs, status));
             SendResponse();
         }
-
 
         protected void EndCommandRequest(string status) {
             _requestTimer.Stop();

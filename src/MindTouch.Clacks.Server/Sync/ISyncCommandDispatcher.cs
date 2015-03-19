@@ -21,6 +21,8 @@ using System.Net;
 
 namespace MindTouch.Clacks.Server.Sync {
     public interface ISyncCommandDispatcher {
+
+        //--- Methods ---
         ISyncCommandHandler GetHandler(IPEndPoint client, string[] command);
     }
 }

@@ -16,11 +16,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using System.Collections.Generic;
 
 namespace MindTouch.Clacks.Server.Async {
     public class AsyncFluentCommandRegistration : IAsyncFluentCommandRegistration {
+
+        //--- Fields ---
         private readonly ServerBuilder _serverBuilder;
         private readonly AsyncCommandRepository _repository;
         private readonly string _command;
@@ -30,12 +33,14 @@ namespace MindTouch.Clacks.Server.Async {
         private Action<IRequest, Action<IResponse, Action>> _multiAsyncResponseHandler;
         private Action<IRequest, Action<IEnumerable<IResponse>>> _multiSyncResponseHandler;
 
+        //--- Constructors ---
         public AsyncFluentCommandRegistration(ServerBuilder serverBuilder, AsyncCommandRepository repository, string command) {
             _serverBuilder = serverBuilder;
             _repository = repository;
             _command = command;
         }
 
+        //--- Methods ---
         public IAsyncFluentCommandRegistration IsDisconnect() {
             _isDisconnect = true;
             return this;

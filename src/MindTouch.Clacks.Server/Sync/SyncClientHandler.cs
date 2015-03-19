@@ -24,17 +24,21 @@ using System.Net.Sockets;
 namespace MindTouch.Clacks.Server.Sync {
     public class SyncClientHandler : AClientRequestHandler {
 
+        //--- Class Fields ---
         private static readonly Logger.ILog _log = Logger.CreateLog();
 
+        //--- Fields ---
         private readonly ISyncCommandDispatcher _dispatcher;
         private ISyncCommandHandler _commandHandler;
         private IEnumerable<IResponse> _responses;
 
+        //--- Constructors ---
         public SyncClientHandler(Guid clientId, Socket socket, ISyncCommandDispatcher dispatcher, IClacksInstrumentation instrumentation, Action<IClientHandler> removeCallback)
             : base(clientId, socket, instrumentation, removeCallback) {
             _dispatcher = dispatcher;
         }
 
+        //--- Methods ---
         public override void ProcessRequests() {
             while(!IsDisposed) {
                 StartCommandRequest();

@@ -16,13 +16,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 
 namespace MindTouch.Clacks.Server {
     public class DataExpectationException : Exception {
+
+        //--- Fields ---
         public readonly int Expected;
         public readonly int Received;
 
+        //--- Constructors ---
         public DataExpectationException(int expected, int received)
             : base(string.Format("Expected {0} bytes, received {1} bytes", expected, received)){
             Expected = expected;

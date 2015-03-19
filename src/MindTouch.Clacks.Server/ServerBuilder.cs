@@ -16,6 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using System.Net;
 using MindTouch.Clacks.Server.Async;
@@ -24,6 +25,7 @@ using MindTouch.Clacks.Server.Sync;
 namespace MindTouch.Clacks.Server {
     public class ServerBuilder : ISyncServerBuilder, IAsyncServerBuilder {
 
+        //--- Class Methods ---
         public static ISyncServerBuilder CreateSync(IPEndPoint endPoint) {
             return new ServerBuilder(endPoint, false);
         }
@@ -32,11 +34,13 @@ namespace MindTouch.Clacks.Server {
             return new ServerBuilder(endPoint, true);
         }
 
+        //--- Fields ---
         private readonly IPEndPoint _endPoint;
         private readonly IClientHandlerFactory _clientHandlerFactory;
         private readonly AsyncCommandRepository _asyncRepository = new AsyncCommandRepository();
         private readonly SyncCommandRepository _syncRepository = new SyncCommandRepository();
 
+        //--- Constructors ---
         private ServerBuilder(IPEndPoint endPoint, bool isAsync) {
             _endPoint = endPoint;
             _clientHandlerFactory = isAsync
@@ -44,6 +48,7 @@ namespace MindTouch.Clacks.Server {
                 : new SyncClientHandlerFactory(_syncRepository);
         }
 
+        //--- Methods ---
         public ClacksServer Build() {
             return Build(null);
         }

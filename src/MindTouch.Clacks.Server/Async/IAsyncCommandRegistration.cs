@@ -16,11 +16,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using System.Net;
 
 namespace MindTouch.Clacks.Server.Async {
     public interface IAsyncCommandRegistration {
+
+        //--- Methods ---
         IAsyncCommandHandler GetHandler(IPEndPoint client, string[] commandArgs, Action<IRequest, Exception, Action<IResponse>> errorHandler);
     }
 }

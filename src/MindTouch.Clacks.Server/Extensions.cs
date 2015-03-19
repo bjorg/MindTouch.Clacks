@@ -16,13 +16,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using System.Text;
 
 namespace MindTouch.Clacks.Server {
     public static class Extensions {
+
+        //--- Constants ---
         private const string TERMINATOR = "\r\n";
-        
+
+        //--- Class Methods ---
         public static byte[] GetBytes(this IResponse response) {
             var sb = new StringBuilder();
             sb.Append(response.Status);

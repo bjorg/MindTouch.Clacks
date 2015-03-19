@@ -16,13 +16,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using System.Net.Sockets;
 
 namespace MindTouch.Clacks.Server.Async {
     public class AsyncClientHandlerFactory : IClientHandlerFactory {
+
+        //--- Fields ---
         private readonly IAsyncCommandDispatcher _dispatcher;
 
+        //--- Constructors ---
         public AsyncClientHandlerFactory(IAsyncCommandDispatcher dispatcher) {
             _dispatcher = dispatcher;
         }

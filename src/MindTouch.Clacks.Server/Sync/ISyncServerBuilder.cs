@@ -16,10 +16,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 
 namespace MindTouch.Clacks.Server.Sync {
     public interface ISyncServerBuilder {
+
+        //--- Methods ---
         ClacksServer Build();
         ClacksServer Build(IClacksInstrumentation instrumentation);
         ISyncServerBuilder WithDefaultHandler(Func<IRequest, IResponse> handler);

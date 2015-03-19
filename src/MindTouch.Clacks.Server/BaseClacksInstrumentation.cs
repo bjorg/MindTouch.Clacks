@@ -16,16 +16,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using System.Net;
 
 namespace MindTouch.Clacks.Server {
     public class BaseClacksInstrumentation : IClacksInstrumentation {
 
+        //--- Class Fields ---
         public static readonly IClacksInstrumentation Instance = new BaseClacksInstrumentation();
         
+        //--- Constructors ---
         private BaseClacksInstrumentation() { }
         
+        //--- Methods ---
         public virtual void ClientConnected(Guid clientId, IPEndPoint remoteEndPoint) { }
         public virtual void ClientDisconnected(Guid clientId) { }
         public virtual void CommandCompleted(StatsCommandInfo info) { }

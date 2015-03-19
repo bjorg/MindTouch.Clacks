@@ -16,6 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,14 +25,17 @@ using System.Net;
 namespace MindTouch.Clacks.Server.Async {
     public class AsyncCommandRepository : IAsyncCommandDispatcher {
 
+        //--- Class Fields ---
         private static readonly Logger.ILog _log = Logger.CreateLog();
 
+        //--- Fields ---
         private readonly Dictionary<string, IAsyncCommandRegistration> _commands = new Dictionary<string, IAsyncCommandRegistration>(StringComparer.InvariantCultureIgnoreCase);
         private Action<IRequest, Exception, Action<IResponse>> _errorHandler = DefaultHandlers.ErrorHandler;
         private IAsyncCommandRegistration _defaultCommandRegistration = DefaultHandlers.AsyncCommandRegistration;
         private Action<IRequest, Action<IResponse>> _disconnectHandler = DefaultHandlers.DisconnectHandler;
         private string _disconnectCommand = "BYE";
 
+        //--- Methods ---
         public IAsyncCommandHandler GetHandler(IPEndPoint client, string[] commandArgs) {
             var command = commandArgs.FirstOrDefault() ?? string.Empty;
             if(command.Equals(_disconnectCommand, StringComparison.InvariantCultureIgnoreCase)) {
@@ -96,5 +100,4 @@ namespace MindTouch.Clacks.Server.Async {
             );
         }
     }
-
 }

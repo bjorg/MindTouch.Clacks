@@ -16,6 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,14 +25,17 @@ using System.Net;
 namespace MindTouch.Clacks.Server.Sync {
     public class SyncCommandRepository : ISyncCommandDispatcher {
 
+        //--- Class Fields ---
         private static readonly Logger.ILog _log = Logger.CreateLog();
 
+        //--- Fields ---
         private readonly Dictionary<string, ISyncCommandRegistration> _commands = new Dictionary<string, ISyncCommandRegistration>();
         private Func<IRequest, Exception, IResponse> _errorHandler = DefaultHandlers.ErrorHandler;
         private ISyncCommandRegistration _defaultCommandRegistration = DefaultHandlers.SyncCommandRegistration;
         private Func<IRequest, IResponse> _disconnectHandler = DefaultHandlers.DisconnectHandler;
         private string _disconnectCommand = "BYE";
 
+        //--- Methods ---
         public ISyncCommandHandler GetHandler(IPEndPoint client, string[] commandArgs) {
             var command = commandArgs.FirstOrDefault() ?? string.Empty;
             if(command == _disconnectCommand) {

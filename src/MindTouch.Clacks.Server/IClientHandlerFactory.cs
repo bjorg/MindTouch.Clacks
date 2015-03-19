@@ -23,7 +23,8 @@ using System.Net.Sockets;
 namespace MindTouch.Clacks.Server {
 
     public interface IClientHandlerFactory {
+
+        //--- Methods ---
         IClientHandler Create(Guid clientId, Socket socket, IClacksInstrumentation instrumentation, Action<IClientHandler> removeHandler);
     }
-
 }

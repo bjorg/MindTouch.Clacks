@@ -23,9 +23,11 @@ using System.Net;
 namespace MindTouch.Clacks.Server {
     public interface IClientHandler {
 
+        //--- Properties ---
         Guid Id { get; }
         IPEndPoint EndPoint { get; }
 
+        //--- Methods ---
         void ProcessRequests();
         void Dispose();
     }
