@@ -1,9 +1,8 @@
 ﻿/*
  * MindTouch.Clacks
  * 
- * Copyright (C) 2011-2013 Arne F. Claassen
- * geekblog [at] claassen [dot] net
- * http://github.com/sdether/MindTouch.Clacks
+ * Copyright (c) 2006-2015 MindTouch Inc
+ * http://github.com/mindtouch/MindTouch.Clacks
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
