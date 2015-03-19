@@ -16,6 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -32,7 +33,6 @@ using MindTouch.Clacks.Server.Sync;
 using Response = MindTouch.Clacks.Server.Response;
 
 namespace MindTouch.Clacks.Tester {
-
     public enum WorkerStatus {
         PreClient,
         PreRequest,
@@ -46,14 +46,158 @@ namespace MindTouch.Clacks.Tester {
     }
 
     public class WorkerInfo {
+
+        //--- Fields ---
         public string Id;
         public WorkerStatus Status;
         public int Requests;
         public Task Task;
     }
 
-    class Program {
-        static void Main(string[] args) {
+    public class Program {
+
+        //--- Types ---
+        private enum ConnectionStatus {
+            Unknown,
+            AwaitCommand,
+            Connected,
+            CommandCompleted,
+            ProcessedCommand,
+            ReceivedCommand,
+            ReceivedCommandPayload
+        }
+
+        private sealed class FaultingSyncClientHandlerFactory : IClientHandlerFactory {
+
+            //--- Fields ---
+            private readonly ISyncCommandDispatcher _dispatcher;
+            private readonly int _faultInterval;
+            private int _requestsTilFault;
+            private int _faults;
+
+            //--- Constructors ---
+            public FaultingSyncClientHandlerFactory(ISyncCommandDispatcher dispatcher, int faultInterval) {
+                _dispatcher = dispatcher;
+                _requestsTilFault = _faultInterval = faultInterval;
+            }
+
+            //--- Properties ---
+            public int Faults { get { return _faults; } }
+
+            //--- Methods ---
+            public IClientHandler Create(Guid clientId, Socket socket, IClacksInstrumentation instrumentation, Action<IClientHandler> removeHandler) {
+                Console.WriteLine("new connection");
+                return new FaultingSyncClientHandler(clientId, socket, _dispatcher, instrumentation, removeHandler, CheckForFault);
+            }
+
+            private bool CheckForFault() {
+                var fault = Interlocked.Decrement(ref _requestsTilFault);
+                if(fault == 0) {
+                    Interlocked.Increment(ref _faults);
+                    Interlocked.Exchange(ref _requestsTilFault, _faultInterval);
+                    return true;
+                }
+                return false;
+            }
+        }
+
+        private sealed class FaultingSyncClientHandler : SyncClientHandler {
+
+            //--- Fields ---
+            private readonly Func<bool> _checkForFault;
+
+            //--- Constructors ---
+            public FaultingSyncClientHandler(Guid clientId, Socket socket, ISyncCommandDispatcher dispatcher, IClacksInstrumentation instrumentation, Action<IClientHandler> removeCallback, Func<bool> checkForFault)
+                : base(clientId, socket, dispatcher, instrumentation, removeCallback) {
+                _checkForFault = checkForFault;
+            }
+
+            //--- Methods ---
+            protected override void Receive(Action<int, int> continuation) {
+                if(_checkForFault()) {
+                    Console.WriteLine("faulting request");
+                    _socket.LingerState = new LingerOption(true, 0);
+                    _socket.Close();
+                    _socket.Dispose();
+                    Dispose();
+                    return;
+                }
+                base.Receive(continuation);
+            }
+        }
+
+        private sealed class ConnectionInfo {
+
+            //--- Fields ---
+            public ConnectionStatus Status;
+            public string Id;
+        }
+
+        private sealed class ClacksInstrumentation : IClacksInstrumentation {
+
+            //--- Fields ---
+            public readonly Dictionary<Guid, ConnectionInfo> Connections = new Dictionary<Guid, ConnectionInfo>();
+            public int Connected;
+            public int Requests;
+            public long RequestTicks;
+
+            //--- Methods ---
+            public void ClientConnected(Guid clientId, IPEndPoint remoteEndPoint) {
+                Interlocked.Increment(ref Connected);
+                CaptureState(clientId, ConnectionStatus.Connected);
+            }
+
+            public void ClientDisconnected(Guid clientId) {
+                lock(Connections) {
+                    Connections.Remove(clientId);
+                }
+            }
+
+            public void CommandCompleted(StatsCommandInfo info) {
+                CaptureState(info, ConnectionStatus.CommandCompleted);
+                Interlocked.Increment(ref Requests);
+                Interlocked.Add(ref RequestTicks, info.Elapsed.Ticks);
+            }
+
+            public void AwaitingCommand(Guid clientId, ulong requestId) {
+                CaptureState(clientId, ConnectionStatus.Connected);
+            }
+
+            public void ProcessedCommand(StatsCommandInfo statsCommandInfo) {
+                CaptureState(statsCommandInfo, ConnectionStatus.ProcessedCommand);
+            }
+
+            public void ReceivedCommand(StatsCommandInfo statsCommandInfo) {
+                CaptureState(statsCommandInfo, ConnectionStatus.ReceivedCommand);
+            }
+
+            public void ReceivedCommandPayload(StatsCommandInfo statsCommandInfo) {
+                CaptureState(statsCommandInfo, ConnectionStatus.ReceivedCommandPayload);
+            }
+
+            private void CaptureState(Guid clientId, ConnectionStatus status) {
+                lock(Connections) {
+                    ConnectionInfo info;
+                    if(!Connections.TryGetValue(clientId, out info)) {
+                        Connections[clientId] = info = new ConnectionInfo();
+                    }
+                    info.Id = "NA";
+                    info.Status = status;
+                }
+            }
+
+            private void CaptureState(StatsCommandInfo info, ConnectionStatus status) {
+                var id = info.Args[1];
+                lock(Connections) {
+                    var connection = Connections[info.ClientId];
+                    connection.Status = status;
+                    connection.Id = id;
+                }
+            }
+        }
+
+        //--- Class Methods ---
+        private static void Main(string[] args) {
             var workerCount = 50;
             var workerPrefix = "w";
             var faultInterval = 100000;
@@ -209,8 +353,7 @@ namespace MindTouch.Clacks.Tester {
                 Thread.Sleep(TimeSpan.FromMinutes(1));
             }
         }
-
-
+        
         private static Task RunServer(string host, int port, int faultInterval) {
             return Task.Factory.StartNew(() => {
                 var t = Stopwatch.StartNew();
@@ -255,130 +398,6 @@ namespace MindTouch.Clacks.Tester {
                     }
                 }
             });
-        }
-
-        public class FaultingSyncClientHandlerFactory : IClientHandlerFactory {
-            private readonly ISyncCommandDispatcher _dispatcher;
-            private readonly int _faultInterval;
-            private int _requestsTilFault;
-            private int _faults;
-
-            public FaultingSyncClientHandlerFactory(ISyncCommandDispatcher dispatcher, int faultInterval) {
-                _dispatcher = dispatcher;
-                _requestsTilFault = _faultInterval = faultInterval;
-            }
-
-            public int Faults { get { return _faults; } }
-
-            public IClientHandler Create(Guid clientId, Socket socket, IClacksInstrumentation instrumentation, Action<IClientHandler> removeHandler) {
-                Console.WriteLine("new connection");
-                return new FaultingSyncClientHandler(clientId, socket, _dispatcher, instrumentation, removeHandler, CheckForFault);
-            }
-
-            private bool CheckForFault() {
-                var fault = Interlocked.Decrement(ref _requestsTilFault);
-                if(fault == 0) {
-                    Interlocked.Increment(ref _faults);
-                    Interlocked.Exchange(ref _requestsTilFault, _faultInterval);
-                    return true;
-                }
-                return false;
-            }
-        }
-
-        public class FaultingSyncClientHandler : SyncClientHandler {
-            private readonly Func<bool> _checkForFault;
-
-            public FaultingSyncClientHandler(Guid clientId, Socket socket, ISyncCommandDispatcher dispatcher, IClacksInstrumentation instrumentation, Action<IClientHandler> removeCallback, Func<bool> checkForFault)
-                : base(clientId, socket, dispatcher, instrumentation, removeCallback) {
-                _checkForFault = checkForFault;
-            }
-
-            protected override void Receive(Action<int, int> continuation) {
-                if(_checkForFault()) {
-                    Console.WriteLine("faulting request");
-                    _socket.LingerState = new LingerOption(true, 0);
-                    _socket.Close();
-                    _socket.Dispose();
-                    Dispose();
-                    return;
-                }
-                base.Receive(continuation);
-            }
-        }
-
-        public enum ConnectionStatus {
-            Unknown,
-            AwaitCommand,
-            Connected,
-            CommandCompleted,
-            ProcessedCommand,
-            ReceivedCommand,
-            ReceivedCommandPayload
-        }
-
-        public class ConnectionInfo {
-            public ConnectionStatus Status;
-            public string Id;
-        }
-
-        private class ClacksInstrumentation : IClacksInstrumentation {
-            public readonly Dictionary<Guid, ConnectionInfo> Connections = new Dictionary<Guid, ConnectionInfo>();
-            public int Connected;
-            public int Requests;
-            public long RequestTicks;
-
-
-            public void ClientConnected(Guid clientId, IPEndPoint remoteEndPoint) {
-                Interlocked.Increment(ref Connected);
-                CaptureState(clientId, ConnectionStatus.Connected);
-            }
-
-            public void ClientDisconnected(Guid clientId) {
-                lock(Connections) {
-                    Connections.Remove(clientId);
-                }
-            }
-
-            public void CommandCompleted(StatsCommandInfo info) {
-                CaptureState(info, ConnectionStatus.CommandCompleted);
-                Interlocked.Increment(ref Requests);
-                Interlocked.Add(ref RequestTicks, info.Elapsed.Ticks);
-            }
-
-            public void AwaitingCommand(Guid clientId, ulong requestId) {
-                CaptureState(clientId, ConnectionStatus.Connected);
-            }
-            public void ProcessedCommand(StatsCommandInfo statsCommandInfo) {
-                CaptureState(statsCommandInfo, ConnectionStatus.ProcessedCommand);
-            }
-
-            public void ReceivedCommand(StatsCommandInfo statsCommandInfo) {
-                CaptureState(statsCommandInfo, ConnectionStatus.ReceivedCommand);
-            }
-            public void ReceivedCommandPayload(StatsCommandInfo statsCommandInfo) {
-                CaptureState(statsCommandInfo, ConnectionStatus.ReceivedCommandPayload);
-            }
-
-            private void CaptureState(Guid clientId, ConnectionStatus status) {
-                lock(Connections) {
-                    ConnectionInfo info;
-                    if(!Connections.TryGetValue(clientId, out info)) {
-                        Connections[clientId] = info = new ConnectionInfo();
-                    }
-                    info.Id = "NA";
-                    info.Status = status;
-                }
-            }
-
-            private void CaptureState(StatsCommandInfo info, ConnectionStatus status) {
-                var id = info.Args[1];
-                lock(Connections) {
-                    var connection = Connections[info.ClientId];
-                    connection.Status = status;
-                    connection.Id = id;
-                }
-            }
         }
     }
 }
