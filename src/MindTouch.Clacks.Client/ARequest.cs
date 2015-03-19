@@ -24,18 +24,24 @@ using System.Text;
 namespace MindTouch.Clacks.Client {
     public abstract class ARequest {
 
+        //--- Constants ---
         protected const string TERMINATOR = "\r\n";
+
+        //--- Fields ---
         private readonly string _command;
         private readonly List<string> _arguments = new List<string>();
         protected readonly HashSet<string> _expectsData = new HashSet<string>();
         private byte[] _data;
 
+        //--- Constructors ---
         protected ARequest(string command) {
             _command = command;
         }
 
+        //--- Properties ---
         public string Command { get { return _command; } }
 
+        //--- Methods ---
         protected void InternalWithArgument<T>(T arg) {
             _arguments.Add(arg.ToString());
         }

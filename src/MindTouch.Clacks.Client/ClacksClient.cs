@@ -16,6 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -29,12 +30,14 @@ namespace MindTouch.Clacks.Client {
     // in a threadsafe manner
     public class ClacksClient : IDisposable {
 
+        //--- Fields ---
         private readonly IConnectionPool _pool;
         private readonly bool _attemptReconnect;
         private ResponseReceiver _receiver;
         private bool _disposed;
         private ISocket _socket;
 
+        //--- Constructors ---
         public ClacksClient(IPEndPoint endPoint, bool attemptReconnect = true)
             : this(ConnectionPool.GetPool(endPoint), attemptReconnect) {
         }
@@ -56,6 +59,7 @@ namespace MindTouch.Clacks.Client {
             _receiver = new ResponseReceiver(_socket);
         }
 
+        //--- Methods ---
         protected virtual void InitSocket() {
             if(_socket != null && !_socket.IsDisposed) {
                 return;

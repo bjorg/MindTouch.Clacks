@@ -20,12 +20,14 @@
 using System;
 
 namespace MindTouch.Clacks.Client {
-
     public class Response {
+
+        //--- Fields ---
         public readonly string Status;
         public readonly string[] Arguments;
         public byte[] Data;
 
+        //--- Constructors ---
         public Response(string[] response) {
             if(response.Length == 0) {
                 throw new EmptyResponseException();

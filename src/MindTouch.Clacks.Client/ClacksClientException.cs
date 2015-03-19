@@ -20,23 +20,31 @@ using System;
 
 namespace MindTouch.Clacks.Client {
     public abstract class ClacksClientException : Exception {
+
+        //--- Constructors ---
         protected ClacksClientException() { }
         protected ClacksClientException(string message) : base(message) { }
         protected ClacksClientException(string message, Exception exception) : base(message, exception) { }
     }
 
     public abstract class ConnectionException : ClacksClientException {
+
+        //--- Constructors ---
         protected ConnectionException() { }
         protected ConnectionException(string message) : base(message) { }
     }
 
     public class ReadException : ConnectionException {
-        public ReadException(string message) : base(message) { }
 
+        //--- Constructors ---
+        public ReadException(string message) : base(message) { }
     }
+
     public class WriteException : ConnectionException { }
 
     public class ConnectException : ClacksClientException {
+
+        //--- Constructors ---
         public ConnectException(Exception exception)
             : base("Unable to Connect to server", exception) {
         }
@@ -47,7 +55,11 @@ namespace MindTouch.Clacks.Client {
     public class InitException : ClacksClientException { }
 
     public class UnknowResponseException : ClacksClientException {
+
+        //--- Fields ---
         public readonly string Response;
+
+        //--- Constructors ---
         public UnknowResponseException(string response)
             : base(string.Format("Response '{0}' is not supported by this client", response)) {
             Response = response;

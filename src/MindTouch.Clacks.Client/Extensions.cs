@@ -16,12 +16,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System.IO;
 using MindTouch.Clacks.Client.Net;
 
 namespace MindTouch.Clacks.Client {
     public static class Extensions {
 
+        //--- Class Methods ---
         public static void Write(this Stream stream, byte[] buffer) {
             stream.Write(buffer, 0, buffer.Length);
         }

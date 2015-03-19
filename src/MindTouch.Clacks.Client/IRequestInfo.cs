@@ -16,8 +16,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 namespace MindTouch.Clacks.Client {
     public interface IRequestInfo {
+
+        //--- Methods ---
         int ExpectedBytes(Response response);
         byte[] AsBytes();
     }

@@ -16,6 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using System.Net;
 using System.Net.Sockets;
@@ -24,6 +25,7 @@ using System.Threading;
 namespace MindTouch.Clacks.Client.Net.Helper {
     public class SocketAdapter : ISocket {
 
+        //--- Class Methods ---
         public static ISocket Open(string host, int port, TimeSpan connectTimeout) {
             return Open(host, port, (int)connectTimeout.TotalMilliseconds);
         }
@@ -64,13 +66,16 @@ namespace MindTouch.Clacks.Client.Net.Helper {
             return new SocketAdapter(socket);
         }
 
+        //--- Fields ---
         private readonly Socket _socket;
         private bool _isDisposed;
 
+        //--- Constructors ---
         public SocketAdapter(Socket socket) {
             _socket = socket;
         }
 
+        //--- Properties ---
         public bool Connected {
             get {
                 if(!_socket.Connected) {
@@ -82,6 +87,7 @@ namespace MindTouch.Clacks.Client.Net.Helper {
 
         public bool IsDisposed { get { return _isDisposed; } }
 
+        //--- Methods ---
         public void Dispose() {
             if(_isDisposed) {
                 return;

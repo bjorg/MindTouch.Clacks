@@ -16,23 +16,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using System.Net.Sockets;
 
 namespace MindTouch.Clacks.Client.Net.Helper {
     public class PoolSocket : ISocket {
+
+        //--- Fields ---
         private readonly ISocket _socket;
         private readonly Action<ISocket> _reclaim;
         private bool _disposed;
 
+        //--- Constructors ---
         public PoolSocket(ISocket socket, Action<ISocket> reclaim) {
             _socket = socket;
             _reclaim = reclaim;
         }
 
+        //--- Properties ---
         public bool Connected { get { return !_disposed && _socket.Connected; } }
         public bool IsDisposed { get { return _disposed; } }
 
+        //--- Methods ---
         public void Dispose() {
             if(_disposed) {
                 return;

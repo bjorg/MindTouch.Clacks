@@ -16,6 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using System.Globalization;
 using System.Reflection;
@@ -23,27 +24,17 @@ using System.Reflection;
 namespace MindTouch.Clacks.Client {
     internal static class Logger {
 
-        private static readonly bool _loggingIsOff = true;
-
-        static Logger() {
-            try {
-                Assembly.Load("log4net");
-                _loggingIsOff = false;
-            } catch { }
-        }
-
-        public static ILog CreateLog() {
-            var frame = new System.Diagnostics.StackFrame(1, false);
-            var type = frame.GetMethod().DeclaringType;
-            return _loggingIsOff ? (ILog)new NoLog() : new Log4NetLogger(type);
-        }
-
+        //--- Types ---
         internal interface ILog {
+
+            //--- Properties ---
             bool IsDebugEnabled { get; }
             bool IsInfoEnabled { get; }
             bool IsWarnEnabled { get; }
             bool IsErrorEnabled { get; }
             bool IsFatalEnabled { get; }
+
+            //--- Methods ---
             void Debug(object message);
             void Debug(object message, Exception exception);
             void DebugFormat(string format, params object[] args);
@@ -81,7 +72,9 @@ namespace MindTouch.Clacks.Client {
             void FatalFormat(IFormatProvider provider, string format, params object[] args);
         }
 
-        private class NoLog : ILog {
+        private sealed class NoLog : ILog {
+
+            //-- Properties ---
             public bool IsDebugEnabled {
                 get { return false; }
             }
@@ -102,6 +95,7 @@ namespace MindTouch.Clacks.Client {
                 get { return false; }
             }
 
+            //--- Methods ---
             public void Debug(object message) { }
             public void Debug(object message, Exception exception) { }
             public void DebugFormat(string format, params object[] args) { }
@@ -139,7 +133,7 @@ namespace MindTouch.Clacks.Client {
             public void FatalFormat(IFormatProvider provider, string format, params object[] args) { }
         }
 
-        private class Log4NetLogger : ILog {
+        private sealed class Log4NetLogger : ILog {
 
             //--- Fields ---
             private readonly log4net.ILog _rootLogger;
@@ -377,6 +371,24 @@ namespace MindTouch.Clacks.Client {
             public void FatalFormat(IFormatProvider provider, string format, params object[] args) {
                 _logger.Log(_type, log4net.Core.Level.Fatal, string.Format(provider, format, args), null);
             }
+        }
+
+        //--- Class Fields ---
+        private static readonly bool _loggingIsOff = true;
+
+        //--- Class Constructor ---
+        static Logger() {
+            try {
+                Assembly.Load("log4net");
+                _loggingIsOff = false;
+            } catch { }
+        }
+
+        //--- Class Methods ---
+        public static ILog CreateLog() {
+            var frame = new System.Diagnostics.StackFrame(1, false);
+            var type = frame.GetMethod().DeclaringType;
+            return _loggingIsOff ? (ILog)new NoLog() : new Log4NetLogger(type);
         }
     }
 }

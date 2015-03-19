@@ -16,12 +16,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using System.Text;
 using MindTouch.Clacks.Client.Net;
 
 namespace MindTouch.Clacks.Client {
     public class ResponseReceiver {
+
+        //--- Fields ---
         private readonly ISocket _socket;
         private readonly StringBuilder _statusBuffer = new StringBuilder();
         private readonly byte[] _buffer = new byte[16 * 1024];
@@ -34,10 +37,12 @@ namespace MindTouch.Clacks.Client {
         private int _responseExpectedBytes = 0;
         private int _responseDataPosition;
 
+        //--- Constructors ---
         public ResponseReceiver(ISocket socket) {
             _socket = socket;
         }
 
+        //--- Methods ---
         public void Reset(IRequestInfo requestInfo) {
             _requestInfo = requestInfo;
             _carriageReturn = false;

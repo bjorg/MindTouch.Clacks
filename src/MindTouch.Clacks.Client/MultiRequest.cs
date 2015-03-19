@@ -16,22 +16,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System.Collections.Generic;
 
 namespace MindTouch.Clacks.Client {
     public class MultiRequest : ARequest, IMultiRequestInfo {
+        
+        //--- Fields ---
         private string _terminatedBy;
         private readonly HashSet<string> _expectedResponses = new HashSet<string>();
 
+        //--- Constructors ---
         public static MultiRequest Create(string command) {
             return new MultiRequest(command);
         }
 
         public MultiRequest(string command) : base(command) { }
 
+        //--- Properties ---
         bool IMultiRequestInfo.IsValid { get { return !string.IsNullOrEmpty(_terminatedBy); } }
         string IMultiRequestInfo.TerminationStatus { get { return _terminatedBy; } }
 
+        //--- Methods ---
         bool IMultiRequestInfo.IsExpected(string status) {
             return _expectedResponses.Contains(status);
         }
@@ -60,6 +66,7 @@ namespace MindTouch.Clacks.Client {
             return this;
         }
 
+        //--- IRequestInfo Members ---
         int IRequestInfo.ExpectedBytes(Response response) {
             return InternalExpectedBytes(response);
         }

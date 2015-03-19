@@ -16,10 +16,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 namespace MindTouch.Clacks.Client {
     public interface IMultiRequestInfo: IRequestInfo {
+
+        //--- Properties ---
         bool IsValid { get; }
-        bool IsExpected(string status);
         string TerminationStatus { get; }
+
+        //--- Methods ---
+        bool IsExpected(string status);
     }
 }

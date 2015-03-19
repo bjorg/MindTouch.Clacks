@@ -16,12 +16,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 
 namespace MindTouch.Clacks.Client.Net {
     public class PoolExhaustedException : Exception {
+        
+        //--- Fields ---
         public readonly int MaxConnections;
 
+        //--- Constructors ---
         public PoolExhaustedException(int maxConnections) {
             MaxConnections = maxConnections;
         }

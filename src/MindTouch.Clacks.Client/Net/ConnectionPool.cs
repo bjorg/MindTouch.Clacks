@@ -29,23 +29,36 @@ namespace MindTouch.Clacks.Client.Net {
     // TODO: need way to configure "BYE" command for automatic socket disposal
     public class ConnectionPool : IConnectionPool, IDisposable {
 
-        private static readonly Logger.ILog _log = Logger.CreateLog();
+        //--- Types ---
+        private sealed class Available {
 
-        private class Available {
+            //--- Fields ---
             public readonly DateTime Queued;
             public readonly ISocket Socket;
 
+            //--- Constructors ---
             public Available(ISocket socket) {
                 Queued = DateTime.UtcNow;
                 Socket = socket;
             }
         }
 
-        private class WaitHandle {
+        private sealed class WaitHandle {
+            
+            //--- Fields ---
             private readonly ManualResetEventSlim _handle = new ManualResetEventSlim();
             private ISocket _socket;
             private bool _waiting = true;
 
+            //--- Properties ---
+            public ISocket Socket {
+                get {
+                    _waiting = false;
+                    return _socket;
+                }
+            }
+
+            //--- Methods ---
             public bool Provide(ISocket socket) {
                 if(!_waiting) {
                     return false;
@@ -58,25 +71,23 @@ namespace MindTouch.Clacks.Client.Net {
             public void Wait(TimeSpan timeout) {
                 _handle.Wait(timeout);
             }
-
-            public ISocket Socket {
-                get {
-                    _waiting = false;
-                    return _socket;
-                }
-            }
         }
 
-        private class WaitingQueue {
+        private sealed class WaitingQueue {
+
+            //--- Fields ---
             private readonly object _syncroot;
             private readonly Queue<WaitHandle> _queue = new Queue<WaitHandle>();
 
+            //--- Constructors ---
             public WaitingQueue(object syncroot) {
                 _syncroot = syncroot;
             }
 
+            //--- Properties ---
             public int Count { get { lock(_syncroot) { return _queue.Count; } } }
 
+            //--- Methods ---
             public bool ProvideSocket(ISocket socket) {
                 lock(_syncroot) {
                     while(_queue.Any()) {
@@ -101,12 +112,15 @@ namespace MindTouch.Clacks.Client.Net {
             }
         }
 
+        //--- Class Fields ---
         public static readonly TimeSpan DefaultConnectTimeout = TimeSpan.FromSeconds(10);
         public static readonly TimeSpan DefaultIdleTimeout = TimeSpan.FromSeconds(30);
         public static readonly TimeSpan DefaultCheckInterval = TimeSpan.FromSeconds(10);
         public static readonly int DefaultMaxConnections = 100;
+        private static readonly Logger.ILog _log = Logger.CreateLog();
         private static readonly Dictionary<string, ConnectionPool> _pools = new Dictionary<string, ConnectionPool>();
 
+        //--- Class Methods ---
         public static ConnectionPool GetPool(IPEndPoint endPoint) {
             lock(_pools) {
                 ConnectionPool pool;
@@ -139,6 +153,7 @@ namespace MindTouch.Clacks.Client.Net {
             return new ConnectionPool(host, port);
         }
 
+        //--- Fields ---
         private readonly object _syncroot = new object();
         private readonly Func<ISocket> _socketFactory;
         private readonly List<Available> _availableSockets = new List<Available>();
@@ -148,6 +163,7 @@ namespace MindTouch.Clacks.Client.Net {
         private TimeSpan _cleanupInterval = TimeSpan.FromSeconds(60);
         private bool _disposed;
 
+        //--- Constructors ---
         private ConnectionPool(IPEndPoint endpoint) : this(() => SocketAdapter.Open(endpoint, DefaultConnectTimeout)) { }
 
         private ConnectionPool(string host, int port) : this(() => SocketAdapter.Open(host, port, DefaultConnectTimeout)) { }
@@ -162,6 +178,7 @@ namespace MindTouch.Clacks.Client.Net {
             _socketCleanupTimer = new Timer(ReapSockets, null, _cleanupInterval, _cleanupInterval);
         }
 
+        //--- Properties ---
         public TimeSpan IdleTimeout { get; set; }
         public TimeSpan CheckInterval { get; set; }
         public TimeSpan ConnectTimeout { get; set; }
@@ -195,6 +212,7 @@ namespace MindTouch.Clacks.Client.Net {
             }
         }
 
+        //--- Methods ---
         public ISocket GetSocket() {
             ThrowIfDisposed();
             ISocket socket = null;

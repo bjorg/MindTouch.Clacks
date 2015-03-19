@@ -20,12 +20,15 @@
 namespace MindTouch.Clacks.Client {
     public class Request : ARequest, IRequestInfo {
 
+        //--- Class Methods ---
         public static Request Create(string command) {
             return new Request(command);
         }
 
+        //--- Constructors ---
         public Request(string command) : base(command) { }
 
+        //--- Methods ---
         public Request WithArgument<T>(T arg) {
             InternalWithArgument(arg);
             return this;

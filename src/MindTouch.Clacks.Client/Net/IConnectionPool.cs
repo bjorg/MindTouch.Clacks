@@ -16,10 +16,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 namespace MindTouch.Clacks.Client.Net {
     public interface IConnectionPool {
+
+        //--- Properties ---
         int ActiveConnections { get; }
         int IdleConnections { get; }
+
+        //--- Methods ---
         ISocket GetSocket();
     }
 }
