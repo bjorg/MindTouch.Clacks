@@ -26,14 +26,17 @@ using MindTouch.Clacks.Client;
 using NUnit.Framework;
 
 namespace MindTouch.Clacks.Server.Tests {
-
     [TestFixture]
     public class RountripTests {
 
-        private static ILog _log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        //--- Class Fields ---
+        private static readonly ILog _log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
+        //--- Fields ---
         private int _port;
         private byte[] _largeBin;
 
+        //--- Methods ---
         [SetUp]
         public void Setup() {
             _log.Debug("priming logger");
@@ -123,7 +126,6 @@ namespace MindTouch.Clacks.Server.Tests {
                 )
                 .Build());
         }
-
 
         private void Can_send_binary_payload_with_auto_data_detection(ClacksServer server) {
             var payloadString = "blahblahblah";

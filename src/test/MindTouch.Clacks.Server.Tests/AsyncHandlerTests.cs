@@ -16,6 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using System.Net;
 using MindTouch.Clacks.Client;
@@ -23,13 +24,16 @@ using NUnit.Framework;
 using log4net;
 
 namespace MindTouch.Clacks.Server.Tests {
-
     [TestFixture]
     public class AsyncHandlerTests {
 
+        //--- Class Fields ---
         private static readonly ILog _log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
+        //--- Fields ---
         private int _port;
 
+        //--- Methods ---
         [SetUp]
         public void Setup() {
             _log.Debug("priming logger");
@@ -106,7 +110,6 @@ namespace MindTouch.Clacks.Server.Tests {
                 }
             }
         }
-
 
         [Test]
         public void Async_Multi_Response_Handler_with_many_callbacks_is_called_exactly_once_per_request() {

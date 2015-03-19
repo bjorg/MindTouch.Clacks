@@ -16,14 +16,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using NUnit.Framework;
 
 namespace MindTouch.Clacks.Server.Tests {
-
     [TestFixture]
     public class MiscTest {
 
+        //--- Methods ---
         [Test]
         public void Can_copy_array_to_itself() {
             var buffer = new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
