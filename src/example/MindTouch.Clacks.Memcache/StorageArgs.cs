@@ -16,18 +16,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using MindTouch.Clacks.Server;
 
 namespace MindTouch.Clacks.Memcache {
     public class StorageArgs {
+
+        //--- Fields ---
         public string Key;
         public uint Flags;
         public TimeSpan Exptime;
+        
+        //--- Constructors ---
         public StorageArgs(IRequest request) {
-            Key = request.Arguments[0];
-            Flags = uint.Parse(request.Arguments[1]);
-            Exptime = TimeSpan.FromSeconds(uint.Parse(request.Arguments[2]));
+            this.Key = request.Arguments[0];
+            this.Flags = uint.Parse(request.Arguments[1]);
+            this.Exptime = TimeSpan.FromSeconds(uint.Parse(request.Arguments[2]));
         }
     }
 }

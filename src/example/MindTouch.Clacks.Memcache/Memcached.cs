@@ -16,6 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,11 +26,15 @@ using MindTouch.Clacks.Server;
 
 namespace MindTouch.Clacks.Memcache {
     public class Memcached : IDisposable {
-        private static ILog _log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
+        //--- Class Fields ---
+        private static readonly ILog _log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         
+        //--- Fields ---
         private readonly ClacksServer _server;
         private readonly Dictionary<string, MemcacheData> _storage = new Dictionary<string, MemcacheData>();
 
+        //--- Constructors ---
         public Memcached(IPEndPoint endPoint) {
             _server = ServerBuilder
                 .CreateAsync(endPoint)
@@ -38,6 +43,7 @@ namespace MindTouch.Clacks.Memcache {
                 .Build();
         }
 
+        //--- Methods ---
         private void Set(IRequest request, Action<IResponse> response) {
             var arguments = new StorageArgs(request);
             var expiration = arguments.Exptime == TimeSpan.Zero ? DateTime.MinValue : DateTime.UtcNow.Add(arguments.Exptime);

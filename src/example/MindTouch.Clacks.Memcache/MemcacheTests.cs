@@ -16,6 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using System.Net;
 using System.Text;
@@ -26,12 +27,15 @@ namespace MindTouch.Clacks.Memcache {
 
     [TestFixture]
     public class MemcacheTests {
-        private static ILog _log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
+        //--- Class Fields ---
+        private static readonly ILog _log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
+        //--- Fields ---
         private IPEndPoint _endPoint;
         private Memcached _server;
 
-
+        //--- Methods ---
         [SetUp]
         public void Setup() {
             _endPoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), new Random().Next(1000, 30000));

@@ -16,22 +16,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Net;
-using System.Text;
 using MindTouch.Clacks.Client;
 
 namespace MindTouch.Clacks.Memcache {
+    public class KeyData {
+
+        //--- Fields ---
+        public byte[] Data;
+        public uint Flags;
+    }
+
     public class MemcacheClient : IDisposable {
+
+        //--- Fields ---
         private readonly ClacksClient _client;
 
+        //--- Constructors ---
         public MemcacheClient(IPEndPoint endPoint) {
             _client = new ClacksClient(endPoint);
         }
 
+        //--- Methods ---
         public void Put(string key, uint flags, TimeSpan ttl, byte[] data) {
             _client.Exec(Request
                 .Create("set")
@@ -74,10 +84,5 @@ namespace MindTouch.Clacks.Memcache {
         public void Dispose() {
             _client.Dispose();
         }
-    }
-
-    public class KeyData {
-        public byte[] Data;
-        public uint Flags;
     }
 }

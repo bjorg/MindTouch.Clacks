@@ -16,10 +16,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 
 namespace MindTouch.Clacks.Memcache {
     public class MemcacheData {
+
+        //--- Fields ---
         public string Key;
         public uint Flags;
         public DateTime Expiration;
